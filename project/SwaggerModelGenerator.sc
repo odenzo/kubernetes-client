@@ -94,7 +94,10 @@ object SwaggerModelGenerator {
         val attributes  = generateAttributes(properties.toSeq.flatten.sortBy(_._1), required.toSeq.flatten)
         val caseClass   = s"""import io.circe._
                            |import io.circe.generic.semiauto._
+                           |//import monocle._
+                           |//import monocle.macros.Lenses
                            |
+                           |/* @Lenses("_") // Disabled */
                            |case class $className(
                            |  ${attributes.replace("\n", "\n  ")}
                            |)
@@ -109,6 +112,9 @@ object SwaggerModelGenerator {
       case Definition(_, None, None, Some(t), _) =>
         val scalaType = swaggerToScalaType(t)
         s"""import io.circe._
+           |
+           |//import monocle._
+           |//import monocle.macros.Lenses
            |
            |case class $className(value: $scalaType) extends AnyVal
            |

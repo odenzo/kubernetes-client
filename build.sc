@@ -2,6 +2,8 @@ import $ivy.`com.goyeau::mill-git:0.1.1`
 import $ivy.`com.goyeau::mill-scalafix:0.1.4`
 import $ivy.`com.lihaoyi::mill-contrib-bsp:$MILL_VERSION`
 import $ivy.`io.github.davidgregory084::mill-tpolecat:0.1.4`
+import $ivy.`com.github.julien-truffaut::monocle-core:2.0.4`
+import $ivy.`com.github.julien-truffaut::monocle-macro:2.0.4`
 import $file.project.Dependencies, Dependencies.Dependencies._
 import $file.project.{SwaggerModelGenerator => SwaggerModelGeneratorFile}
 import SwaggerModelGeneratorFile.SwaggerModelGenerator
@@ -21,9 +23,10 @@ class KubernetesClientModule(val crossScalaVersion: String)
     with SwaggerModelGenerator {
   override def scalacOptions =
     super.scalacOptions().filter(_ != "-Wunused:imports") ++
-      (if (scalaVersion().startsWith("2.12")) Seq("-Ypartial-unification") else Seq.empty)
+      (if (scalaVersion().startsWith("2.12")) Seq("-Ypartial-unification", "") else Seq.empty) ++
+      (if (scalaVersion().startsWith("2.13")) Seq("-Ymacro-annotations") else Seq.empty)
   override def ivyDeps =
-    super.ivyDeps() ++ http4s ++ circe ++ circeYaml ++ bouncycastle ++ collectionCompat ++ logging
+    super.ivyDeps() ++ http4s ++ circe ++ circeYaml ++ bouncycastle ++ collectionCompat ++ logging ++ monocle
 
   object test extends Tests {
     def testFrameworks    = Seq("munit.Framework")
